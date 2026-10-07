@@ -24,6 +24,13 @@
     }:
     let
       system = "x86_64-linux";
+      personal = import ./personal.nix;
+      username = personal.username;
+      hostname = personal.hostname;
+      hostnameServer = personal.hostnameServer;
+      gitName = personal.gitName;
+      gitEmail = personal.gitEmail;
+
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
@@ -40,11 +47,16 @@
       };
       neovimPkg = neovimConfiguration.neovim;
       serverModules = [
-        ./hosts/nixos-server/configuration.nix
+        ./hosts/profiles/server.nix
         inputs.nvf.nixosModules.default
         inputs.home-manager.nixosModules.default
         inputs.sops-nix.nixosModules.sops
-        { environment.systemPackages = [ neovimPkg ]; }
+        {
+          environment.systemPackages = [
+            neovimPkg
+            inputs.synfetch.packages.${system}.default
+          ];
+        }
       ];
     in
     {
@@ -52,14 +64,18 @@
       packages.${system}.default = neovimPkg;
 
       nixosConfigurations = {
-        nixos = nixpkgs.lib.nixosSystem {
+        ${hostname} = nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = {
             inherit inputs;
             inherit pkgs-unstable;
+            inherit username;
+            inherit hostname;
+            inherit gitName;
+            inherit gitEmail;
           };
           modules = [
-            ./hosts/nixos-desktop/configuration.nix
+            ./hosts/profiles/desktop.nix
             inputs.stylix.nixosModules.stylix
             inputs.nvf.nixosModules.default
             inputs.home-manager.nixosModules.default
@@ -75,19 +91,31 @@
           ];
         };
         # Server
-        nixos-server = nixpkgs.lib.nixosSystem {
+        ${hostnameServer} = nixpkgs.lib.nixosSystem {
           inherit system;
+          specialArgs = {
+            inherit username;
+            inherit hostnameServer;
+            inherit gitName;
+            inherit gitEmail;
+          };
           modules = serverModules;
         };
       };
       colmenaHive = colmena.lib.makeHive {
         meta = {
           nixpkgs = pkgs;
+          specialArgs = {
+            inherit username;
+            inherit hostnameServer;
+            inherit gitName;
+            inherit gitEmail;
+          };
         };
-        nixos-server = {
+        ${hostnameServer} = {
           deployment = {
             targetHost = "100.104.174.121";
-            targetUser = "duckdarsh";
+            targetUser = username;
           };
           imports = serverModules;
         };

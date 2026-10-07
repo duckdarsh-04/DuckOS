@@ -2,6 +2,9 @@
   config,
   pkgs,
   pkgs-unstable,
+  username,
+  gitName,
+  gitEmail,
   ...
 }:
 {
@@ -21,8 +24,8 @@
     ../modules/dotfiles/hyprland/default.nix
   ];
 
-  home.username = "duckdarsh";
-  home.homeDirectory = "/home/duckdarsh";
+  home.username = username;
+  home.homeDirectory = "/home/${username}";
   home.stateVersion = "24.11";
   home.packages =
     (with pkgs; [
@@ -53,13 +56,11 @@
       onlyoffice-desktopeditors
       swayosd
       teams-for-linux
-      obsidian
+      #obsidian
       sl
       magic-wormhole
       amfora
       cava
-      spotify
-      ryubing
       swaynotificationcenter
       git
       keepassxc
@@ -71,15 +72,13 @@
       telegram-desktop
       imv
       libnotify
-      pandoc
-      jasp-desktop
-      bun
-      fladder
       jellyfin-desktop
+      fladder
+
     ])
 
     ++ (with pkgs-unstable; [
-
+      obsidian
     ]);
 
   programs.home-manager.enable = true;
@@ -92,14 +91,13 @@
 
   programs.git = {
     enable = true;
-    settings.user.name = "duckdarsh-04";
-    settings.user.email = "mdarshan2004@gmail.com";
+    settings.user.name = gitName;
+    settings.user.email = gitEmail;
     settings.init.defaultBranch = "main";
     settings.safe.directory = [ "/etc/nixos" ];
   };
 
   services.swayosd.enable = true;
   stylix.targets.gtk.enable = true;
-  gtk.gtk4.theme = config.gtk.theme;
   stylix.targets.qt.enable = false;
 }

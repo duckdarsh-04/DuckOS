@@ -1,17 +1,20 @@
 {
   config,
   pkgs,
+  username,
+  gitName,
+  gitEmail,
   ...
 }:
 {
   imports = [
-    ../../modules/dotfiles/bash.nix
-    ../../modules/dotfiles/htop.nix
-    ../../modules/dotfiles/ranger.nix
+    ../modules/dotfiles/bash.nix
+    ../modules/dotfiles/htop.nix
+    ../modules/dotfiles/ranger.nix
   ];
 
-  home.username = "duckdarsh";
-  home.homeDirectory = "/home/duckdarsh";
+  home.username = username;
+  home.homeDirectory = "/home/${username}";
 
   # You should not change this value, even if you update Home Manager. If you do
   # want to update the value, then make sure to first check the Home Manager
@@ -22,7 +25,6 @@
     bat
     phetch
     amfora
-    neofetch
     ranger
     figlet
     git

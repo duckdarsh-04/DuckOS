@@ -2,11 +2,19 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  pkgs-unstable,
+  username,
+  gitName,
+  gitEmail,
+  ...
+}:
 
 {
   imports = [
-    ./hardware-configuration.nix
+    ../../hardware/hardware-server.nix
     ../modules/commonsyspkgs.nix
     ../modules/core/security/fail2ban.nix
     ../modules/core/security/ssh.nix
@@ -59,8 +67,8 @@
   services.xserver.enable = true;
 
   # Enable the KDE Plasma Desktop Environment.
-  services.displayManager.sddm.enable = false;
-  services.desktopManager.plasma6.enable = false;
+  #services.displayManager.sddm.enable = false;
+  #services.desktopManager.plasma6.enable = false;
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
@@ -85,12 +93,10 @@
     #media-session.enable = true;
   };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-  users.users.duckdarsh = {
+  users.users.${username} = {
     isNormalUser = true;
-    description = "duckdarsh";
-    hashedPasswordFile = config.sops.secrets."duckdarsh-password".path;
+    description = username;
+    hashedPasswordFile = config.sops.secrets."${username}-password".path;
     extraGroups = [
       "networkmanager"
       "wheel"
@@ -120,9 +126,16 @@
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
   home-manager.backupFileExtension = "hm.bk.duck";
-  home-manager.users.duckdarsh = import ../../home/nixos-server/duckdarsh/home.nix;
-  home-manager.users.mindhunter = import ../../home/nixos-server/mindhunter/home.nix;
-
+  home-manager.users.${username} = import ../../home/profiles/server.nix;
+  home-manager.users.mindhunter = import ../../home/users/mindhunter.nix;
+  home-manager.extraSpecialArgs = {
+    inherit
+      pkgs-unstable
+      username
+      gitName
+      gitEmail
+      ;
+  };
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -138,8 +151,6 @@
     sshguard
     zoxide
     docker-compose
-    adguardhome
-    unbound
     transmission_4
     iptables
     openvpn
@@ -160,6 +171,7 @@
     fail2ban
     xclip
     smartmontools
+    starship
   ];
 
   # Experimental features enabled
@@ -178,20 +190,6 @@
   services.jellyfin.enable = true;
   # Tailscale
   services.tailscale.enable = true;
-  # adguard home
-  services.adguardhome.enable = true;
-  services.adguardhome.port = 8083;
-  services.adguardhome.mutableSettings = false;
-  services.adguardhome.settings = {
-    dns.bind_port = 53;
-    dns.bind_hosts = [ "192.168.0.121" ];
-    dns.bootstrap_dns = [
-      "1.1.1.1"
-      "8.8.8.8"
-    ];
-    http.address = "192.168.0.121:8083";
-  };
-
   # Transmission daemon service enabled
   services.transmission = {
     enable = true;
@@ -199,8 +197,8 @@
     openRPCPort = false;
     settings = {
       #rpc-bind-address = "0.0.0.0";
-      download-dir = "/home/duckdarsh/movies";
-      watch-dir = "/home/duckdarsh/transmission-watch-dir";
+      download-dir = "/home/${username}/movies";
+      watch-dir = "/home/${username}/transmission-watch-dir";
       watch-dir-enabled = true;
     };
   };
@@ -210,21 +208,10 @@
     enable = true;
     systemCronJobs = [
       "* * * * * 	duckdarsh 	/home/duckdarsh/.bin/transmission_magnet"
-      "0 2 * * *        root            /run/current-system/sw/bin/mountpoint -q /mnt/disk2 && /run/current-system/sw/bin/rsync -aAXHv --inplace --partial --mkpath --delete /home/duckdarsh/docker-compose_applicatons/ /mnt/disk2/docker-compose_applications/ >> /home/duckdarsh/rsync-backup.log 2>&1"
+      "0 2 * * *        root            /run/current-system/sw/bin/mountpoint -q /mnt/disk2 && /run/current-system/sw/bin/rsync -aAXHv --inplace --partial --mkpath --delete /home/duckdarsh/home-lab/ /mnt/disk2/home-lab/ >> /home/duckdarsh/rsync-backup.log 2>&1"
+      "0 23 * * 6       root            find /mnt/disk1/movies /mnt/disk1/tamilmovies -type d -name \"*.trickplay\" -exec chmod -Rv 775 {} \\; -exec chown -Rv jellyfin:media {} \\; >> /home/duckdarsh/trickplay-fix.log 2>&1"
     ];
   };
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [
     22
     80

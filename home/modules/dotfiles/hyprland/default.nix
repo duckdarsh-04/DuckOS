@@ -10,12 +10,15 @@
     enable = true;
     configType = "hyprlang";
     plugins = [
-      #pkgs.hyprlandPlugins.hyprscrolling
-      #pkgs.hyprlandPlugins.hyprexpo
+      #pkgs.hyprlandPlugins.hyprspace
     ];
 
     settings = {
-      monitor = ",preferred,auto,auto";
+      monitor = [
+        ",preferred,auto,auto"
+        "HDMI-A-1, preferred,auto, 1, mirror, eDP-1"
+      ];
+
       #Programs
       "$terminal" = "kitty";
       "$fileManager" = "thunar";
@@ -27,10 +30,10 @@
         "waybar"
         "awww-daemon"
         "awww img ~/wallpapers/wallhaven-3lgxx3_1920x1080.png --transition-type slide --transition-fps 60"
-        "swayosd-server"
         "hypridle"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
+        "solaar --window=hide"
       ];
 
       #Environment

@@ -10,7 +10,7 @@
       "$mainMod, V, togglefloating,"
       "$mainMod, D, exec, $menu"
       "$mainMod, P, pseudo,"
-      "$mainMod, J, layoutmsg, togglesplit"
+      "$mainMod, J, layoutmsg, fit active"
 
       # Custom scripts and tools
       "$mainMod SHIFT, W, exec, /etc/nixos/home/modules/dotfiles/hyprland/scripts/wallpaper.sh"
@@ -21,14 +21,14 @@
       "$mainMod, L, exec, hyprlock"
       "$mainMod SHIFT, C, exec, cliphist list | rofi -dmenu | cliphist decode | wl-copy"
       # Move windows
-      "$mainMod, period, layoutmsg, colresize +0.1"
+      "$mainMod CTRL, comma, layoutmsg, colresize +0.1"
       "$mainMod CTRL, period, layoutmsg, colresize -0.1"
       "$mainMod, comma, layoutmsg, swapcol l"
       "$mainMod, period, layoutmsg, swapcol r"
       "$mainMod SHIFT, comma, layoutmsg, move l"
       "$mainMod SHIFT, period, layoutmsg, move r"
-      # Hyprexpo
-      #"$mainMod, TAB, hyprexpo:expo, toggle"
+      # Hyprspace
+      #"$mainMod, TAB, overview:toggle"
       # Focus movement
       "$mainMod, left, movefocus, l"
       "$mainMod, right, movefocus, r"

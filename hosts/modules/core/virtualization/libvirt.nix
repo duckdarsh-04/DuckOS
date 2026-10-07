@@ -1,13 +1,15 @@
 {
   config,
   pkgs,
+  username,
   ...
-}: {
+}:
+{
   #enable dconf (system management tool)
   programs.dconf.enable = true;
 
   #libvirtd user group
-  users.users.duckdarsh.extraGroups = ["libvirtd"];
+  users.users.${username}.extraGroups = [ "libvirtd" ];
 
   #Required packages
   environment.systemPackages = with pkgs; [

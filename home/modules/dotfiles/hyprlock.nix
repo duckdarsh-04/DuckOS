@@ -1,6 +1,7 @@
 {
   pkgs,
   config,
+  username,
   ...
 }:
 {
@@ -15,14 +16,14 @@
       };
       background = [
         {
-          path = "/home/duckdarsh/Hyprlock.png";
+          path = "/home/${username}/Hyprlock.png";
           blur_passes = 3;
           blur_size = 8;
         }
       ];
       image = [
         {
-          path = "/home/duckdarsh/.Hyprlockduck.jpeg";
+          path = "/home/${username}/.Hyprlockduck.jpeg";
           size = 150;
           border_size = 4;
           border_color = "rgb(0c96F9)";

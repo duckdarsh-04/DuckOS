@@ -6,11 +6,14 @@
   pkgs,
   pkgs-unstable,
   inputs,
+  username,
+  gitName,
+  gitEmail,
   ...
 }:
 {
   imports = [
-    ./hardware-configuration.nix
+    ../../hardware/hardware-desktop.nix
     ../modules/nvidia.nix
     ../modules/fonts.nix
     ../modules/stylix.nix
@@ -23,7 +26,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.configurationLimit = 5;
-  boot.kernelPackages = pkgs.linuxPackages_zen;
+  boot.kernelPackages = pkgs.linuxPackages_xanmod;
   boot.tmp.useTmpfs = true;
   #zramSwap enabled
   zramSwap = {
@@ -32,6 +35,12 @@
     memoryPercent = 40;
   };
 
+  services.scx = {
+    enable = true;
+    scheduler = "scx_lavd";
+  };
+
+  hardware.nvidia.dynamicBoost.enable = true;
   # powerprofile management
   services.power-profiles-daemon.enable = true;
 
@@ -41,13 +50,11 @@
   # Enable networking
   networking.networkmanager.enable = true;
   networking.resolvconf.enable = true;
-  networking.nameservers = [
-    "100.100.100.100"
-    "100.88.43.124"
-    "1.1.1.1"
-    "1.0.0.1"
-  ];
-  networking.networkmanager.dns = "none";
+  networking.extraHosts = ''
+    0.0.0.0 paradise-s1.battleye.com
+    0.0.0.0 test-s1.battleye.com
+    0.0.0.0 paradiseenhanced-s1.battleye.com
+  '';
 
   #System encryption
   boot.initrd.luks.devices."luks-d2879559-8f56-4cf4-9b57-12a66d051a2e".device =
@@ -109,14 +116,14 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  users.users.duckdarsh = {
+  users.users.${username} = {
     isNormalUser = true;
-    description = "duckdarsh";
+    description = username;
     extraGroups = [
       "networkmanager"
       "wheel"
     ];
-    hashedPasswordFile = config.sops.secrets."duckdarsh-password".path;
+    hashedPasswordFile = config.sops.secrets."${username}-password".path;
   };
 
   #sops
@@ -125,14 +132,22 @@
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
   home-manager.backupFileExtension = "hm.bk.duck";
-  home-manager.users.duckdarsh = import ../../home/nixos-desktop/home.nix;
+  home-manager.users.${username} = import ../../home/profiles/desktop.nix;
   home-manager.sharedModules = [ inputs.dark-send.homeManagerModules.default ];
-  home-manager.extraSpecialArgs = { inherit pkgs-unstable; };
+  home-manager.extraSpecialArgs = {
+    inherit
+      pkgs-unstable
+      username
+      gitName
+      gitEmail
+      ;
+  };
 
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages =
     (with pkgs; [
+      hollywood
       gamemode
       heroic
       jdk11
@@ -157,8 +172,8 @@
       tumbler
       sddm-astronaut
       libimobiledevice
-      ollama
       appimage-run
+      piper
 
       bibata-cursors
       mangohud
@@ -191,6 +206,9 @@
   #Bluetooth configuration
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
+  #logitech udev rules
+  hardware.logitech.wireless.enable = true;
+  hardware.logitech.wireless.enableGraphical = true;
   #experimental features enabled
   nix.settings.experimental-features = [
     "nix-command"
@@ -211,7 +229,6 @@
   };
   #Asusd
   services.asusd.enable = true;
-  #services.asusd.enableUserService = true;
   #sshd
   services.openssh.enable = false;
   #ollama

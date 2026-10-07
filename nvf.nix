@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, username, ... }:
 {
   vim = {
     theme = {
@@ -58,7 +58,7 @@
       "instant.nvim" = {
         package = pkgs.vimPlugins.instant-nvim;
         before = ''
-          vim.g.instant_username = "duckdarsh"
+          vim.g.instant_username = username;
         '';
       };
     };

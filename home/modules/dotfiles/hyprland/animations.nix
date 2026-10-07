@@ -11,7 +11,17 @@
         "almostLinear,0.5,0.5,0.75,1.0"
         "quick,0.15,0,0.1,1"
       ];
-
+      windowrule = [
+        "match:class ^(kitty)$,animation slide left"
+        "match:class ^(brave-browser)$,animation slide right"
+        "match:class ^(thunar)$,animation slide top"
+        "match:class ^(obsidian)$,animation slide left"
+        "match:class ^(zen-beta)$,animation slide right"
+        "match:class ^(org.telegram.desktop)$,animation slide right"
+        "match:class ^(com.rtosta.zapzap)$,animation slide right"
+        "match:class ^(discord)$,animation slide right"
+        "match:class ^(ONLYOFFICE)$,animation slide left"
+      ];
       animation = [
         "global, 1, 10, default"
         "border, 1, 5.39, easeOutQuint"
