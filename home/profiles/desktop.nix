@@ -63,6 +63,7 @@
       cava
       swaynotificationcenter
       git
+      git-cliff
       keepassxc
       cliphist
       wl-clip-persist

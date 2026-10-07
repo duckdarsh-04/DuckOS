@@ -190,7 +190,7 @@
 
   #Flake reference for NH
   environment.sessionVariables = {
-    NH_FLAKE = "/etc/nixos";
+    #NH_FLAKE = "/etc/nixos";
   };
 
   #Gaming
@@ -242,6 +242,11 @@
       thunar-volman
       thunar-media-tags-plugin
     ];
+  };
+
+  programs.nh = {
+    enable = true;
+    flake = "path:/etc/nixos";
   };
 
   #enabling nix-index
