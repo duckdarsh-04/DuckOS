@@ -173,7 +173,7 @@
       sddm-astronaut
       libimobiledevice
       appimage-run
-      piper
+      btrfs-progs
 
       bibata-cursors
       mangohud
